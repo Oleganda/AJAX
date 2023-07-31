@@ -1,0 +1,118 @@
+<!-- Intermediate Exercise | XML
+
+In this example, you should create an XML file which will contain data about your favorite songs. 
+You should provide at least 20 songs with this data: title, artist, country, genre, year.
+
+Intermediate Exercise | AJAX XML
+Now use the XML file that you have created in the previous example and load it into the HTML page using AJAX. 
+You should create a nice template you can use Bootstrap or plain HTML/CSS/JS. 
+ -->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-aFq/bzH65dt+w6FI2ooMVUpc+21e0SRygnTpmBvdBgSdnuTN7QbdgL+OapgHtvPp" crossorigin="anonymous">
+
+</head>
+
+<body>
+    <div class="container mb-5">
+        <h1 class="text-center">Add a TV Show</h1>
+        <form class="w-75 m-auto" id="form">
+            <div class="mb-3">
+                <label for="title" class="form-label">Title</label>
+                <input type="text" class="form-control" id="title" name="title">
+            </div>
+            <div class="mb-3">
+                <label for="genre" class="form-label">Genre</label>
+                <input type="text" class="form-control" id="genre" name="genre">
+            </div>
+            <div class="mb-3">
+                <label for="year" class="form-label">Year</label>
+                <input type="text" class="form-control" id="year" name="year">
+            </div>
+            <div class="mb-3">
+                <label for="country" class="form-label">Country</label>
+                <input type="text" class="form-control" id="country" name="country">
+            </div>
+            <button type="submit" class="btn btn-warning">Submit</button>
+        </form>
+        <hr>
+        <h2 class='text-center'>TV Shows</h2>
+        <table class="table mt-5 m-auto w-75">
+            <input class="form-control w-50 m-auto" id="search" placeholder="Search">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Title</th>
+                    <th scope="col">Genre</th>
+                    <th scope="col">Country</th>
+                    <th scope="col">Year</th>
+                    
+                </tr>
+            </thead>
+            <tbody>
+
+            </tbody>
+        </table>
+
+        <script>
+            let form = document.getElementById("form");                                                //to be able to take values from form, after clicking Submit.
+//Add TV function
+        function addTvShow(e){                                                                         //parameter e-as event. can be defferent parameter, but everyone uses e
+            e.preventDefault();                                                                        //to prevent page to refresh
+            let title = document.getElementById("title").value;                                        // target element and get value from it                   
+            let genre = document.getElementById("genre").value;
+            let year = document.getElementById("year").value;                                          //keep values in different variables
+            let country = document.getElementById("country").value;
+            let addShow = `title=${title}&genre=${genre}&year=${year}&country=${country}`               //send values to add_show.php
+        
+            let xhttp = new XMLHttpRequest();
+            xhttp.onload = function(){
+                if(this.status == 200) {
+                  
+                }
+            };
+            displayTvShow();                                                                            //call function to add Tv show withput refreshing function
+            xhttp.open("POST", "add_show.php", true);                                                   //to open request, it should be first
+            xhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");                 //setting header for POST method
+            xhttp.send(addShow);
+        }
+        form.addEventListener("submit", addTvShow)                                                      //when form submitted, to execute function.
+
+//Showing TV shows from database on the page
+        function displayTvShow(){
+            let xhttp = new XMLHttpRequest();
+            xhttp.onload = function(){
+                if(this.status == 200) {
+                    document.getElementsByTagName("tbody")[0].innerHTML = this.responseText;            //if getElementbyTagName it will return array, thats why we need to specify index.
+                }
+            };
+            xhttp.open("GET", "display_tvshow.php", true);
+            xhttp.send();
+        }
+        displayTvShow();     //dont forget call a function!
+
+
+//Search box functionality
+        function searchTvshow(){
+            let xhttp = new XMLHttpRequest();
+            let value = document.getElementById("search").value;
+            xhttp.onload = function(){
+                if(this.status == 200) {
+                   document.getElementsByTagName("tbody")[0].innerHTML = this.responseText;
+                }
+            };
+            xhttp.open("GET", "search.php?search=" + value);                                            //where search equal to value from the input
+            xhttp.send();
+        }
+
+        document.getElementById("search").addEventListener("keyup", searchTvshow)
+        </script>
+
+    </div>
